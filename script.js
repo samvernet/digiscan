@@ -1,7 +1,7 @@
 // Configuration
 const CONFIG = {
     SHEET_ID: '1gwe5oyDjs_u_qbLbRkjF3cCvLAm1dUO_fG0agUAjfjU',
-    TRACKING_SHEET_ID: '1gwe5oyDjs_u_qbLbRkjF3cCvLAm1dUO_fG0agUAjfjU', // Remplacez par l'ID de votre sheet de tracking
+    TRACKING_SHEET_ID: '13d0sO0isKMQWP5rkkLxhbzpgIVGrd1pARzFLfACMDE0', // Remplacez par l'ID de votre sheet de tracking
     ACCESS_CODES: {
         'TECH2024': { companyName: 'TechInnovate Solutions', rowIndex: 1 },
         'DIGITAL2024': { companyName: 'Digital Marketing Pro', rowIndex: 2 },
@@ -607,4 +607,5 @@ document.addEventListener('DOMContentLoaded', function() {
         analysisData = null;
         selectedCompany = null;
     });
+
 });
