@@ -1,7 +1,9 @@
 // Configuration
 const CONFIG = {
     SHEET_ID: '1gwe5oyDjs_u_qbLbRkjF3cCvLAm1dUO_fG0agUAjfjU',
-    TRACKING_SHEET_ID: '13d0sO0isKMQWP5rkkLxhbzpgIVGrd1pARzFLfACMDE0', // Remplacez par l'ID de votre sheet de tracking
+    TRACKING_SHEET_ID: '13d0sO0isKMQWP5rkkLxhbzpgIVGrd1pARzFLfACMDE0',
+    // Remplacez par votre URL Google Apps Script une fois déployé
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbz5sSW92LVefZz0W0UgSoNZaJt7ebdBcPj11R8pVUR-OCrpHJKWNEd4Ya9bC81uMTHc/exec',
     ACCESS_CODES: {
         'TECH2024': { companyName: 'TechInnovate Solutions', rowIndex: 1 },
         'DIGITAL2024': { companyName: 'Digital Marketing Pro', rowIndex: 2 },
@@ -18,7 +20,7 @@ const CONFIG = {
 };
 
 const PLATFORMS = [
-    { key: 'facebook', name: 'Facebook', icon: '📘', color: '#1877F2' },
+    { key: 'facebook', name: 'Facebook', icon: '🔘', color: '#1877F2' },
     { key: 'linkedin', name: 'LinkedIn', icon: '💼', color: '#0A66C2' },
     { key: 'instagram', name: 'Instagram', icon: '📷', color: '#E4405F' },
     { key: 'website', name: 'Site Web', icon: '🌐', color: '#059669' },
@@ -137,19 +139,49 @@ function parseCSV(csvContent) {
 }
 
 async function trackUserAccess(userInfo, accessCode) {
-    // Ici vous pouvez implémenter l'envoi vers un Google Sheet de tracking
-    // Pour l'instant, on log juste dans la console
-    console.log('Tracking user access:', {
-        timestamp: new Date().toISOString(),
-        firstName: userInfo.firstName,
-        lastName: userInfo.lastName,
-        company: userInfo.company,
-        email: userInfo.email,
-        accessCode: accessCode
-    });
-    
-    // TODO: Implémenter l'envoi vers Google Sheets via Google Apps Script
-    // ou utiliser une API comme Zapier/Make pour envoyer les données
+    try {
+        // Vérifier si l'URL Apps Script est configurée
+        if (CONFIG.APPS_SCRIPT_URL === 'VOTRE_URL_APPS_SCRIPT_ICI') {
+            console.log('URL Apps Script non configurée. Données de tracking:', {
+                timestamp: new Date().toISOString(),
+                firstName: userInfo.firstName,
+                lastName: userInfo.lastName,
+                company: userInfo.company,
+                email: userInfo.email,
+                accessCode: accessCode
+            });
+            return;
+        }
+        
+        const trackingData = {
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            company: userInfo.company,
+            email: userInfo.email,
+            accessCode: accessCode
+        };
+        
+        console.log('Envoi des données de tracking:', trackingData);
+        
+        const response = await fetch(CONFIG.APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(trackingData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Tracking envoyé avec succès:', result);
+        } else {
+            console.error('Erreur lors de l\'envoi du tracking:', response.status, response.statusText);
+        }
+        
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi vers Google Sheets:', error);
+        // Ne pas bloquer l'application si le tracking échoue
+    }
 }
 
 // Fonctions d'interface
@@ -606,6 +638,15 @@ document.addEventListener('DOMContentLoaded', function() {
         userInfo = null;
         analysisData = null;
         selectedCompany = null;
+        
+        // Détruire les graphiques
+        if (radarChart) {
+            radarChart.destroy();
+            radarChart = null;
+        }
+        if (performanceChart) {
+            performanceChart.destroy();
+            performanceChart = null;
+        }
     });
-
 });
